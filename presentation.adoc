@@ -1,0 +1,17 @@
+= Presentation template
+First author; Second author
+:revealjs_theme: camptocamp
+:revealjs_controlsLayout: edges
+:revealjs_slideNumber: c/t
+:revealjs_hash: true
+:revealjs_mouseWheel: true
+:icons: font
+:iconfont-remote!:
+:source-highlighter: highlight.js
+:stylesdir: css
+:imagesdir: images
+:revealjsdir: reveal.js
+:highlightjsdir: node_modules/@highlightjs/cdn-assets
+:docinfo: private,shared
+
+== Table of content

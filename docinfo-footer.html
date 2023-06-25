@@ -1,0 +1,15 @@
+<!-- FIXME: move logos to docinfo-header.html once
+	https://github.com/asciidoctor/asciidoctor-reveal.js/pull/510
+	has been merged -->
+<div id="logo-title"></div>
+<div id="logo-header-left"></div>
+<div id="logo-header-right"></div>
+<script>
+	Reveal.on('overviewshown', () => {
+		document.body.classList.add('overview');
+	});
+
+	Reveal.on('overviewhidden', () => {
+		document.body.classList.remove('overview');
+	});
+</script>
