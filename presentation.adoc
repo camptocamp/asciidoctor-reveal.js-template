@@ -121,6 +121,16 @@ CAUTION: be careful.
 
 WARNING: danger zone!
 
+=== Speaker Notes
+
+You can add speaker notes and see them during the presentation by pressing s.
+
+[.notes]
+****
+* this is the new block type for speaker notes
+* only visible in the speaker window
+****
+
 === Glossary
 
 Term 1::
