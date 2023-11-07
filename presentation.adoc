@@ -1,5 +1,5 @@
-= Presentation template
-First author; Second author
+= INFRA TALK : New Logging stack
+IST6
 :revealjs_theme: camptocamp
 :revealjs_controlsLayout: edges
 :revealjs_slideNumber: c/t
@@ -16,122 +16,129 @@ First author; Second author
 
 == Table of content
 
-* First item
-* Second item
-* Third item
+* Why ?
+* What ?
+* Questions
 
-== Horizontal slide 1
+== Why a new stack ?
 
-=== Vertical slide 1
+=== The state of the old stack
 
-Content of first slide
+* Running on Centos7 VMs not supported for some time.
+* Elasticsearch 7 not suppoted anymore.
+* ReadonlyREST plugin for authorization management.
+* Storage scaling needed new nodes.
+
+[.notes]
+****
+Readonlyrest :
+
+* Static confile that needs a restart of the servers.
+* Not possible to do openID connect.
+* No multi tenant possible so one kibana for each customer/platform.
+
+Storage scaling :
+
+* Due the the instance type on exoscale we were at the maximum storage and needed new VMs to add storage to the cluster..
+****
+
+=== The promises of Opensearch
+
+* 100% opensource and free.
+* Multi-tenancy with OIDC.
+* Configure everything dynamically.
+
+[.notes]
+****
+Opensource and free :
+
+  * Community fork backed by AWS.
+  * No license (Apache v2.0).
+  * Free of charge.
+
+Tenancy + oidc :
+
+  * Only one container for all the customers and internal dashboards.
+  * Multiple tenants and a private tenant.
+  * Plug behind our keycloak/freeipa for easier authorization management
+
+Configure :
+
+  * Now includes tenants/roles
+****
+
+== What was done
+
+=== The new stack
+
+image::opensearch.png[Architecture diagram]
+
+=== Result
+
+* Less cloud provider costs
+* New architecture
+* More indexation
+* Storage scaling more flexible
+
+[.notes]
+****
+The stack costs less due to the new instance types and less resources for all the kibanas
+
+Due to ROR only the master nodes were open, but now all nodes are behind the security plugin
+and ssl cert auth, so we can injest data directly on the data nodes.
+
+Indexation : 10k -> 30k
+
+Storage optimized instances : 800GB -> 3TB
+****
 
 === !
 
-Content continuation of first slide
+* Started to use vector
+  ** Can replace filebeat/promtail/logstash
+  ** Less resources consumption, more indexation
 
-=== Vertical slide 2
+* Use more of freeipa features (SSH/sudo/DNS)
+  ** Improve terraform provider
 
-Content of second slide
+* Everything in *one* repository :
+  https://github.com/camptocamp/logging
 
-== Horizontal slide 2
+[.notes]
+****
+Vector:
 
-[.columns]
-=== Columns
+ * send to kafka/loki/es + configuration more flexible
+ * x10 less resources consumption, more indexation (100k)
+ * goal: vector everywhere (Elastic tools will not be compatible with OpenSearch)
+
+IPA: enrolled in freeipa but only used for certificates, now also :
+
+ * ssh : key in user profile + ssh fp in dns
+ * sudo authorizations managed via ipa groups
+ * work on the tf provider to add managed_hosts -> then update new framework -> adding resources groups/certs/services
+
+Before we had 4 repos (tf+puppet+helm+docs).
+****
+
+[.columns.is-vcentered]
+== Any questions ?
+
+[.column.is-one-third]
+--
+{empty} +
+{empty} +
+{empty} +
+
+image::documentation_menu.png[What is doc]
+--
 
 [.column]
 --
-Column 1
+{empty} +
+{empty} +
 
-Content of first column.
+Project documentation :
+
+https://camptocamp.github.io/logging
 --
-
-[.column]
---
-Column 2
-
-Content of second column.
---
-
-=== Steps
-
-[%step]
-. One
-. Two
-. Three
-
-== Unordered list
-
-* One
-** A
-** B
-* Two
-* Three
-
-=== Ordered list
-
-. One
-.. A
-.. B
-. Two
-. Three
-
-=== Tables
-
-.Title
-[%header, cols="2,3"]
-|===
-|Header C1, R1
-|Header C2, R1
-
-|Cell C1, R2
-|Cell C2, R2
-
-|Cell C1, R3
-|Cell C2, R3
-|===
-
-=== Source code
-
-[source, golang, highlight="1|3..5|7..9"]
---
-package main <1>
-
-import (
-	"fmt" <2>
-)
-
-func main() { <3>
-    fmt.Println("Hello, World!")
-}
---
-<1> Package declaration
-<2> `fmt` package import
-<3> Program entrypoint
-
-=== Admonitions
-
-NOTE: this is a note.
-
-TIP: this is a tip.
-
-IMPORTANT: this is important.
-
-CAUTION: be careful.
-
-WARNING: danger zone!
-
-=== Glossary
-
-Term 1::
-Definition 1.
-
-Term 2::
-Definition 2.
-
-Term 3::
-Definition 3.
-
-=== Image
-
-image::logo.svg[]
